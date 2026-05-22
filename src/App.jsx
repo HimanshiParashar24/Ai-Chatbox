@@ -4,7 +4,9 @@ import Answer from './components/Answers';
 
 function App() {
 const [question,setQuestion] = useState('');
-const [result,setResult] = useState([])
+const [result,setResult] = useState([]);
+const [recentHistory,setRecentHistory] = useState(JSON.parse(localStorage.getItem('history')));
+
 
 const payload = {
   "contents":[{
@@ -14,13 +16,23 @@ const payload = {
 
 const askQuestion=async()=>{
 
+  if(localStorage.getItem('history')){
+    let history = JSON.parse(localStorage.getItem('history'))
+    history = [question,...history]
+    localStorage.setItem('history',JSON.stringify(history))
+    setRecentHistory(history)
+  }
+   else{
+    localStorage.setItem('history',JSON.stringif([question]))
+    setRecentHistory([question])
+   } 
+
   let response = await fetch(import.meta.env.VITE_GEMINI_API_URL,{
     method:"POST",
     body:JSON.stringify(payload)
   })
 
   response= await response.json()
-
 
   if(!response.candidates){
     console.log("API Error");
@@ -47,6 +59,15 @@ const askQuestion=async()=>{
   return (
     <div className='grid grid-cols-5 h-screen  bg-black'>
      <div className='col-span-1 bg-black text-white p-4 shadow-2xl border-zinc-800 border'>
+      <ul>
+        {
+          recentHistory && recentHistory.map((item)=>(
+            <li>
+              {item}
+            </li>
+          ))
+        }
+      </ul>
       </div>
       <div className='col-span-4 w-full overflow-hidden'>
      <div className='container h-[85%] w-full overflow-scroll scrollbar-hide '>
@@ -59,21 +80,15 @@ const askQuestion=async()=>{
     <div  key={index} className={item.type=='q'?'flex justify-end':'w-full'}>
 
     {
-      item.type=='q' 
-      ?
-      <li 
-      key={index}
-      className='text-right pl-6 pr-6 text-white border-2 bg-zinc-800 border-zinc-600 rounded-2xl ml-auto max-w-[70%]  p-3'>
-        <Answer ans={item.text} />
-      </li> 
+      item.type=='q' ?
+      <li key={index}
+      className='text-right pl-6 pr-6 text-white border-2 bg-zinc-800 border-zinc-600 rounded-br-3xl rounded-bl-3xl rounded-tl-3xl ml-auto max-w-[70%]  p-2'>
+      <Answer ans={item.text} totalResult={1} index={index} type={item.type} /></li> 
 
-      :
-      item.text.map((ansItem,ansIndex)=>(
-
-        <li 
-        key={`${index}-${ansIndex}`} 
+      :item.text.map((ansItem,ansIndex)=>(
+       <li  key={`${index}-${ansIndex}`} 
         className='text-left text-white max-w-[80%]  p-2'>
-          <Answer ans={ansItem} />
+          <Answer  ans={ansItem} totalResult={item.length} type={item.type} index={ansIndex} />
         </li> 
       ))
     }
@@ -82,22 +97,6 @@ const askQuestion=async()=>{
   ))
 }
 </ul>
-{
-
-     // <ul>
-      
-      //  {
-      //   result&& result.map((item,index)=>(
-      //    <li key={index} className='text-left list-decimal pl-6 text-white '>
-      //     <Answer 
-      //     ans={item} 
-          // index={index} />
-      //   </li> 
-          
-      //   ))
-      //  }
-      //  </ul> 
-          }
         </div> 
 
      </div>
