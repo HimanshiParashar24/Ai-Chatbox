@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { replaceHeadingStarts, checkHeading } from "./helper";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-//import Markdown from 'https://esm.sh/react-markdown@10'
 
 import ReactMarkdown from 'react-markdown'
 

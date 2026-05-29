@@ -98,7 +98,7 @@ function App() {
 
   return (
   
-    <div className="md:grid md:grid-cols-5 h-screen  bg-black">
+    <div className="md:grid md:grid-cols-5 min-h-screen  bg-black">
       <div className="md:block hidden">
      <RecentSearch recentHistory={recentHistory} setRecentHistory={setRecentHistory} setSelectedHistory={setSelectedHistory} />
        </div>
@@ -116,9 +116,10 @@ function App() {
             </div>
           ) : null
         }
-        <div ref={scrollToAns} className="h-[75%] w-full overflow-y-scroll scrollbar-hide px-2 md:px-5">
+        <div ref={scrollToAns} 
+        className="h-[calc(100vh-170px)] md:h-[calc(100vh-140px)] w-full overflow-y-auto scrollbar-hide px-2 md:px-5 pb-24">
           <div>
-            <div className="p-3 md:p-10 ">
+            <div className="p-3 md:p-8 ">
               <ul>
                 {result.map((item, index) => (
                   <Questions item={item} index={index} key={index} />
